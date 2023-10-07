@@ -3,82 +3,159 @@ from scipy.stats import f_oneway
 
 def resultado(resultadoAnova):
     if resultadoAnova.pvalue < 0.05:
-        print("Hay diferencias significativas entre al menos dos grupos.")
+        print("Hay diferencias significativas entre al menos dos grupos.\n")
     else:
-        print("No hay diferencias significativas entre los grupos.")
+        print("No hay diferencias significativas entre los grupos.\n")
 
 datos = pd.read_csv('TransporteNL_Limpio.csv')
 
+datos = datos.drop(datos[(datos['Pasajeros transportados'] == 0) | (datos['UNIDADES_OPERANDO'] == 0) | (datos['Kilómetros recorridos'] == 0)].index)
 
-datosNL = datos.where(datos['ID_ENTIDAD'] == 19)
-datost1 = datosNL.where(datosNL['TRANSPORTE'] == 'Metrorrey')
-datost1 = datost1.dropna(subset='ID_ENTIDAD')
-datost1['Metro'] = datost1['Pasajeros transportados']
-datpst2 = datosNL.where(datosNL['TRANSPORTE'] == 'Transmetro')
-datpst2 = datpst2.dropna(subset='TRANSPORTE')
-datpst2['Transmetro'] = datpst2['Pasajeros transportados']
-datosjoinNL = pd.concat([datost1, datpst2], axis=0, ignore_index=True)
+datosMetrorrey = datos.where(datos['TRANSPORTE'] == 'Metrorrey')
+datosMetrorrey = datosMetrorrey.dropna()
 
-resultado_anova01 = f_oneway(datost1['Metro'], datpst2['Transmetro'])
+datosTrenLigero = datos.where(datos['TRANSPORTE'] == 'Tren Ligero')
+datosTrenLigero = datosTrenLigero.dropna()
+
+datosMetroCDMX = datos.where(datos['TRANSPORTE'] == 'Sistema de Transporte Colectivo Metro')
+datosMetroCDMX = datosMetroCDMX.dropna()
+
+datosTrolebus = datos.where(datos['TRANSPORTE'] == 'Trolebús')
+datosTrolebus = datosTrolebus.dropna()
+
+datosTransmetroNL = datos.where(datos['TRANSPORTE'] == 'Transmetro')
+datosTransmetroNL = datosTransmetroNL.dropna()
+
+datosMetrobus = datos.where(datos['TRANSPORTE'] == 'Metrobús')
+datosMetrobus = datosMetrobus.dropna()
+
+datosBusCDMX = datos.where(datos['TRANSPORTE'] == 'Red de transporte de pasajeros')
+datosBusCDMX = datosBusCDMX.dropna()
+
+datosCablebus = datos.where(datos['TRANSPORTE'] == 'Cablebús')
+datosCablebus = datosCablebus.dropna()
+
+datosTrenSub = datos.where(datos['TRANSPORTE'] == 'Tren Suburbano')
+datosTrenSub = datosTrenSub.dropna()
+
+datosTrenEle = datos.where(datos['TRANSPORTE'] == 'Tren Eléctrico')
+datosTrenEle = datosTrenEle.dropna()
+
+datosEcovia = datos.where(datos['TRANSPORTE'] == 'Ecovía')
+datosEcovia = datosEcovia.dropna()
+
+datosViveBus = datos.where(datos['TRANSPORTE'] == 'Vivebús')
+datosViveBus = datosViveBus.dropna()
+
+datosMexiBus = datos.where(datos['TRANSPORTE'] == 'Mexibús')
+datosMexiBus = datosMexiBus.dropna()
+
+datosMexicable = datos.where(datos['TRANSPORTE'] == 'Mexicable')
+datosMexicable = datosMexicable.dropna()
+
+datosQbus = datos.where(datos['TRANSPORTE'] == 'Qrobús')
+datosQbus = datosQbus.dropna()
+
+datosOptibus = datos.where(datos['TRANSPORTE'] == 'Optibús')
+datosOptibus = datosOptibus.dropna()
 
 
-datosCMX = datos.where(datos['ID_ENTIDAD'] == 9)
-datost1 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Sistema de Transporte Colectivo Metro')
-datost1 = datost1.dropna(subset='ID_ENTIDAD')
-datost1['Metro'] = datost1['Pasajeros transportados']
-datpst2 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Metrobús')
-datpst2 = datpst2.dropna(subset='TRANSPORTE')
-datpst2['Metrobus'] = datpst2['Pasajeros transportados']
-datosjoinCDMX = pd.concat([datost1, datpst2], axis=0, ignore_index=True)
 
-
-
-resultado_anova1 = f_oneway(datosjoinNL['Pasajeros transportados'], datosjoinNL['UNIDADES_OPERANDO'])
-resultado_anova2 = f_oneway(datosjoinNL['Kilómetros recorridos'], datosjoinNL['UNIDADES_OPERANDO'])
-resultado_anova3 = f_oneway(datost1['Metro'], datpst2['Metrobus'])
-resultado_anova4 = f_oneway(datosjoinCDMX['Pasajeros transportados'], datosjoinCDMX['UNIDADES_OPERANDO'])
-
-
-print("ANOVA NUEVO LEON Metro - Transmetro: ",resultado_anova01)
-resultado(resultado_anova01)
-print("ANOVA NUEVO LEON Metro y Transmetro - Unidades Operando: ",resultado_anova1)
+resultado_anova1 = f_oneway(datosMetroCDMX['Pasajeros transportados'], datosMetrorrey['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosMetroCDMX['UNIDADES_OPERANDO'], datosMetrorrey['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
 resultado(resultado_anova1)
-print("ANOVA NUEVO LEON Kilometros recorridos - Unidades Operando: ",resultado_anova2)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
 resultado(resultado_anova2)
-print("ANOVA CDMX Metro - Metrobus: ",resultado_anova3)
-resultado(resultado_anova3)
-print("ANOVA CDMX Metro y Metrobus - Unidades Operando: ",resultado_anova4)
-resultado(resultado_anova4)
 
-datosCMX = datos.where(datos['ID_ENTIDAD'] == 9)
-datost1 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Tren Ligero')
-datost1 = datost1.dropna(subset='ID_ENTIDAD')
-datost1['TrenLigero'] = datost1['Pasajeros transportados']
-datpst2 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Trolebús')
-datpst2 = datpst2.dropna(subset='TRANSPORTE')
-datpst2['Trole'] = datpst2['Pasajeros transportados']
-datosjoinCDMX = pd.concat([datost1, datpst2], axis=0, ignore_index=True)
-resultado_anova04 = f_oneway(datost1['TrenLigero'], datpst2['Trole'])
-resultado_anova4 = f_oneway(datosjoinCDMX['Pasajeros transportados'], datosjoinCDMX['UNIDADES_OPERANDO'])
+resultado_anova1 = f_oneway(datosTransmetroNL['Pasajeros transportados'], datosMetrobus['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTransmetroNL['UNIDADES_OPERANDO'], datosMetrobus['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
 
-print("ANOVA CDMX Tren ligero - Trolebus: ",resultado_anova4)
-resultado(resultado_anova4)
-print("ANOVA CDMX Tren ligero y Trolebus - Unidades Operando: ",resultado_anova4)
-resultado(resultado_anova4)
+resultado_anova1 = f_oneway(datosEcovia['Pasajeros transportados'], datosMetrobus['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosEcovia['UNIDADES_OPERANDO'], datosMetrobus['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
 
-datosCMX = datos.where(datos['ID_ENTIDAD'] == 9)
-datost1 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Red de Transporte de Pasajeros')
-datost1 = datost1.dropna(subset='ID_ENTIDAD')
-datost1['Bus'] = datost1['Pasajeros transportados']
-datpst2 = datosCMX.where(datosCMX['TRANSPORTE'] == 'Sistema de Transporte Colectivo Metro')
-datpst2 = datpst2.dropna(subset='TRANSPORTE')
-datpst2['Metro'] = datpst2['Pasajeros transportados']
-datosjoinCDMX = pd.concat([datost1, datpst2], axis=0, ignore_index=True)
+resultado_anova1 = f_oneway(datosEcovia['Pasajeros transportados'], datosTransmetroNL['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosEcovia['UNIDADES_OPERANDO'],datosTransmetroNL['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
 
-resultado_anova04 = f_oneway(datost1['Bus'], datpst2['Metro'])
-resultado_anova4 = f_oneway(datosjoinCDMX['Pasajeros transportados'], datosjoinCDMX['UNIDADES_OPERANDO'])
+resultado_anova1 = f_oneway(datosMexiBus['Pasajeros transportados'], datosOptibus['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosMexiBus['UNIDADES_OPERANDO'],datosOptibus['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
 
-print("ANOVA CDMX Autobus - Metro: ",resultado_anova04)
-resultado(resultado_anova04)
-print("ANOVA CDMX Autobus y Metro - Unidades Operando: ",resultado_anova4)
-resultado(resultado_anova4)
+resultado_anova1 = f_oneway(datosCablebus['Pasajeros transportados'], datosOptibus['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosCablebus['UNIDADES_OPERANDO'],datosOptibus['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosCablebus['Pasajeros transportados'], datosMexiBus['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosCablebus['UNIDADES_OPERANDO'],datosMexiBus['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosCablebus['Pasajeros transportados'], datosMexicable['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosCablebus['UNIDADES_OPERANDO'], datosMexicable['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosMexiBus['Pasajeros transportados'], datosMexicable['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosMexiBus['UNIDADES_OPERANDO'], datosMexicable['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosTrenLigero['Pasajeros transportados'], datosTrenEle['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTrenLigero['UNIDADES_OPERANDO'], datosTrenEle['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosTrenSub['Pasajeros transportados'], datosTrenEle['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTrenSub['UNIDADES_OPERANDO'], datosTrenEle['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosTrenSub['Pasajeros transportados'], datosTrenLigero['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTrenSub['UNIDADES_OPERANDO'], datosTrenLigero['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+resultado_anova1 = f_oneway(datosTrenSub['Pasajeros transportados'], datosMetrorrey['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTrenSub['UNIDADES_OPERANDO'], datosMetrorrey['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
+
+
+resultado_anova1 = f_oneway(datosTrenSub['Pasajeros transportados'], datosMetroCDMX['Pasajeros transportados'])
+resultado_anova2 = f_oneway(datosTrenSub['UNIDADES_OPERANDO'], datosMetroCDMX['UNIDADES_OPERANDO'])
+print("ANOVA Pasajeros Metrorrey - Metro CDMX: ",resultado_anova1)
+resultado(resultado_anova1)
+print("ANOVA Unidades Metrorrey - Metro CDMX: ",resultado_anova2)
+resultado(resultado_anova2)
