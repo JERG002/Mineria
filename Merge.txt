@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+Archivo para poder hacer merge en github probando 123
+=======
 Archivo para poder hacer merge en github
+>>>>>>> master
